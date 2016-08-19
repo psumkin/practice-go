@@ -56,6 +56,41 @@ func (r *Record) SetID(id uuid.UUID) {
 // Records represents collection
 type Records []Record
 
+// Getter requeres implementation
+type Getter interface {
+	Get() uuid.UUID
+}
+
+// Setter requeres implementation
+type Setter interface {
+	Set(uuid.UUID)
+}
+
+// LogGetter works on Getter
+func LogGetter(i Getter) {
+	log.Println("#LogGetter", i.Get())
+}
+
+// SetSetter works on Getter
+func SetSetter(i Setter) {
+	i.Set(uuid.NewV4())
+}
+
+// Set implements Setter interface
+func (r *Record) Set(id uuid.UUID) {
+	r.ID = id
+}
+
+// Get implements Getter interface
+func (r Record) Get() uuid.UUID {
+	return r.ID
+}
+
+// Check types at compiling
+var _ Identifiable = &Record{}
+var _ Getter = Record{}
+var _ Setter = &Record{}
+
 func main() {
 	rec1 := Record{uuid.NewV4()}
 	rec2 := NewRecord()
@@ -76,4 +111,11 @@ func main() {
 
 	rr := Records{rec1, *rec2}
 	log.Println("#rr", rr)
+
+	LogGetter(rec1)
+	LogGetter(rec2)
+	SetSetter(&rec1)
+	SetSetter(rec2)
+	LogGetter(rec1)
+	LogGetter(rec2)
 }
