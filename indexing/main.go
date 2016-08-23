@@ -117,4 +117,14 @@ func main() {
 	LogIndexed(pslice1)
 	LogIndexed(&pslice1)
 
+	var pmap2 PMap
+	log.Println("#pmap2", pmap2, len(pmap2), pmap2[0], pmap2 == nil)
+	// panic: assignment to entry in nil map
+	// pmap2[0] = &T{11}
+
+	pmap3 := make(PMap)
+	log.Println("#pmap3", pmap3, len(pmap3), pmap3[0], pmap3 == nil)
+	pmap3[0] = &T{11}
+	LogIndexed(pmap3)
+
 }
