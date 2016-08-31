@@ -30,6 +30,13 @@ type Stored interface {
 	Next([]byte) interface{}
 }
 
+// StoredPre extends collection interface
+type StoredPre interface {
+	// Prepare sets collection size
+	Prepare(int)
+	Stored
+}
+
 // GetStored loads all items from boltdb Bucket
 func GetStored(items Stored) (err error) {
 	bucket := items.Bucket()
@@ -41,6 +48,10 @@ func GetStored(items Stored) (err error) {
 
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(bucket)
+		_, ok := items.(StoredPre)
+		if ok {
+			items.(StoredPre).Prepare(b.Stats().KeyN)
+		}
 
 		b.ForEach(func(k, v []byte) error {
 

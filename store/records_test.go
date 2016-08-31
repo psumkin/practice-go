@@ -86,6 +86,12 @@ func (items *RecordsSlice) Next([]byte) interface{} {
 	return &(*items)[len(*items)-1]
 }
 
+// Prepare implements StoredPre interface
+func (items *RecordsSlice) Prepare(len int) {
+	log.Println("#RecordsSlice,#Prepare")
+	*items = make([]*Record, 0, len)
+}
+
 // DeleteRecord deletes item from boltdb Bucket
 func DeleteRecord(id uuid.UUID) error {
 	return Delete([]byte(RecordsBucket), []byte(id.String()))
